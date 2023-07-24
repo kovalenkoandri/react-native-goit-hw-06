@@ -8,6 +8,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   Pressable,
+  Alert,
 } from 'react-native';
 import SvgLocationMark from '../../helpers/SvgLocationMark';
 import SvgCreatePhotoIcon from '../../helpers/SvgCreatePhotoIcon';
@@ -112,6 +113,7 @@ const CreatePostsScreen = ({ navigation }) => {
               {/* <Text style={styles.CreatePostsScreenLocationName}>Местность...</Text> */}
             </View>
             <Pressable
+              disabled={!photo ? true : false}
               style={({ pressed }) => {
                 pressed && setPressed(true);
                 return [
