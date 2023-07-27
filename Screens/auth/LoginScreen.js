@@ -9,11 +9,12 @@ import {
   Keyboard,
 } from 'react-native';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { styles } from '../../styles';
 import { ValidateInput } from '../../helpers/ValidateInput';
 import { CommonRegisterLogin } from '../../helpers/CommonRegisterLogin';
 import { WrapperAuth } from '../../helpers/WrapperAuth';
-import React from 'react';
+import { authSignInUser } from '../../redux/auth/authOperations';
 
 export const LoginScreen = ({ navigation }) => {
   const {
@@ -26,6 +27,12 @@ export const LoginScreen = ({ navigation }) => {
     isShowKeyboard,
     width,
   } = ValidateInput();
+
+  const dispatch = useDispatch();
+  const handleSubmit = () => {
+    dispatch(authSignInUser({ emailValue, passwordValue }));
+  };
+
   return (
     <WrapperAuth>
       <View style={styles.logTitleWrapper}>
@@ -46,7 +53,8 @@ export const LoginScreen = ({ navigation }) => {
           style={styles.buttonAuth}
           activeOpacity={0.8}
           // onPress={keyboardHide}
-          onPress={()=> navigation.navigate('Home')}
+          // onPress={()=> navigation.navigate('Home')}
+          onPress={handleSubmit}
         >
           <Text style={styles.textAuth}>Войти</Text>
         </TouchableOpacity>
