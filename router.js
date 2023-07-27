@@ -6,7 +6,6 @@ import { LoginScreen } from './Screens/auth/LoginScreen';
 import { RegistrationScreen } from './Screens/auth/RegistrationScreen';
 import Home from './Screens/mainScreen/Home';
 
-
 export const useRoute = (isAuth) => {
   if (!isAuth) {
     return (
@@ -34,6 +33,17 @@ export const useRoute = (isAuth) => {
         />
       </AuthStack.Navigator>
     );
+  } else {
+    return (
+      <AuthStack.Navigator>
+        <AuthStack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="Home"
+          component={Home}
+        />
+      </AuthStack.Navigator>
+    );
   }
-  
 };
