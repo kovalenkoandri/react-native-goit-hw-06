@@ -11,10 +11,12 @@ import {
   Keyboard,
 } from 'react-native';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { styles } from '../../styles';
 import { ValidateInput } from '../../helpers/ValidateInput';
 import { CommonRegisterLogin } from '../../helpers/CommonRegisterLogin';
 import { WrapperAuth } from '../../helpers/WrapperAuth';
+import { authSignUpUser } from '../../redux/auth/authOperations';
 
 export const RegistrationScreen = ({ navigation }) => {
   const {
@@ -30,6 +32,10 @@ export const RegistrationScreen = ({ navigation }) => {
     width,
   } = ValidateInput();
 
+  const dispatch = useDispatch();
+  const handleSubmit = () => {
+    dispatch(authSignUpUser({ loginValue, emailValue, passwordValue }));
+  };
   return (
     <WrapperAuth>
       <Image
@@ -64,7 +70,8 @@ export const RegistrationScreen = ({ navigation }) => {
           style={styles.buttonAuth}
           activeOpacity={0.8}
           // onPress={keyboardHide}
-          onPress={() => navigation.navigate('Home')}
+          // onPress={() => navigation.navigate('Home')}
+          onPress={handleSubmit}
         >
           <Text style={styles.textAuth}>Зарегистрироваться</Text>
         </TouchableOpacity>

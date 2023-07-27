@@ -35,3 +35,7 @@ yarn-error.*
 *.tsbuildinfo
 package-lock.json
 firebase/config.js
+%ProgramData%/Microsoft/Windows/UUS/State/_active.uusver
+redux/ReactotronConfig.js
+.env
+.vscode/launch.json
