@@ -17,17 +17,24 @@ import SvgTrashBin from '../../helpers/SvgTrashBin';
 import SvgGoBack from '../../helpers/SvgGoBack';
 import SvgLogout from '../../helpers/SvgLogout';
 import { HeaderBackButton } from '@react-navigation/elements';
+import { useDispatch } from 'react-redux';
+import { authSignOutUser } from '../../redux/auth/authOperations';
 
 const MainTab = createBottomTabNavigator();
 
 const Home = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const logout = () => {
+
+    dispatch(authSignOutUser());
+  };
   return (
     <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
       <MainTab.Screen
         options={{
           tabBarIcon: () => <SvgPosts />,
           headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={logout}>
               <SvgLogout />
             </TouchableOpacity>
           ),

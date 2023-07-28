@@ -24,13 +24,6 @@ export const useRoute = (isAuth) => {
           name="Registration"
           component={RegistrationScreen}
         />
-        <AuthStack.Screen
-          options={{
-            headerShown: false,
-          }}
-          name="Home"
-          component={Home}
-        />
       </AuthStack.Navigator>
     );
   } else {
