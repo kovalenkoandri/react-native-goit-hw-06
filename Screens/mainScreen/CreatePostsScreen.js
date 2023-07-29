@@ -121,7 +121,7 @@ const CreatePostsScreen = ({ navigation }) => {
               />
               {/* <Text style={styles.CreatePostsScreenLocationName}>Местность...</Text> */}
             </View>
-            <TouchableOpacity
+            <Pressable
               disabled={!photo ? true : false}
               style={({ pressed }) => {
                 pressed && setPressed(true);
@@ -142,7 +142,7 @@ const CreatePostsScreen = ({ navigation }) => {
               >
                 Опубликовать
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -169,7 +169,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  CreatePostsScreenWidthHeight: { width: '100%', height: '100%' },
+  CreatePostsScreenWidthHeight: {
+    width: '100%',
+    height: '100%',
+  },
   CreatePostsScreenLoadPhotoIconCircle: {
     width: 60,
     height: 60,
