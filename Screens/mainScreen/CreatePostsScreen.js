@@ -74,6 +74,9 @@ const CreatePostsScreen = ({ navigation }) => {
     await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64);
     setPressed(false);
     setPhoto(null);
+    const pathReference = ref(storage, `postImages/${uniquePostId}`);
+
+    console.log('storageFirebasePhoto', pathReference._location.path_);
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
