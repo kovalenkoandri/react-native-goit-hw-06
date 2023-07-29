@@ -16,7 +16,7 @@ import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 import { ValidateInput } from '../../helpers/ValidateInput';
 import { storage } from '../../firebase/config';
-import { ref, uploadBytes } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -74,9 +74,10 @@ const CreatePostsScreen = ({ navigation }) => {
     await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64);
     setPressed(false);
     setPhoto(null);
-    const pathReference = ref(storage, `postImages/${uniquePostId}`);
-
-    console.log('storageFirebasePhoto', pathReference._location.path_);
+     const pathReference = await getDownloadURL(
+      ref(storage, `postImages/${uniquePostId}`),
+    );
+    console.log('storageFirebasePhoto', pathReference);
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
