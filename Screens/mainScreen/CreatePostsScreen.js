@@ -15,6 +15,8 @@ import SvgCreatePhotoIcon from '../../helpers/SvgCreatePhotoIcon';
 import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 import { ValidateInput } from '../../helpers/ValidateInput';
+import { storage } from '../../firebase/config';
+import { ref, uploadBytes } from 'firebase/storage';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -22,6 +24,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [coord, setCoord] = useState(null);
+  const [base64, setBase64] = useState(null);
   const inputTitleHandler = (text) => setTitle(text);
   const inputLocationHandler = (text) => setLocation(text);
   const [locationData, setLocationData] = useState(null);
@@ -48,21 +51,27 @@ const CreatePostsScreen = ({ navigation }) => {
     text = JSON.stringify(locationData);
     // console.log('locationData ', text);
   }
-
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
+    const photo = await camera.takePictureAsync({ base64: true });
     const locationCoords = await Location.getCurrentPositionAsync();
     setCoord(locationCoords);
     setPhoto(photo.uri);
+    setBase64(photo.base64);
   };
 
-  const sendPhoto = () => {
+  const sendPhoto = async () => {
     navigation.navigate('Публикации', {
       photo,
       title,
       location,
       coord,
     });
+    // const response = await fetch(photo.uri); // make response object
+    // const file = await response.blob(); // convert to blob
+    // await uploadBytes(storageRef, file);
+    // goit version
+    const uniquePostId = Date.now().toString();
+    await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64);
     setPressed(false);
     setPhoto(null);
   };
