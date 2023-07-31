@@ -10,13 +10,15 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import SvgLocationMark from '../../helpers/SvgLocationMark';
 import SvgCreatePhotoIcon from '../../helpers/SvgCreatePhotoIcon';
 import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 import { ValidateInput } from '../../helpers/ValidateInput';
-import { storage } from '../../firebase/config';
+import { storage, db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { collection, addDoc } from 'firebase/firestore';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -27,58 +29,70 @@ const CreatePostsScreen = ({ navigation }) => {
   const [base64, setBase64] = useState(null);
   const inputTitleHandler = (text) => setTitle(text);
   const inputLocationHandler = (text) => setLocation(text);
-  const [locationData, setLocationData] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [pressed, setPressed] = useState(false);
   const { keyboardHide, isShowKeyboard, setIsShowKeyboard } = ValidateInput();
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
+  const { userId, nick } = useSelector((state) => state.auth);
 
-      let currentPosition = await Location.getCurrentPositionAsync({});
-      setLocationData(currentPosition);
-    })();
-  }, []);
+  const requestLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+    const locationCoords = await Location.getCurrentPositionAsync();
+    setCoord(locationCoords ?? errorMsg);
+  };
 
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (locationData) {
-    text = JSON.stringify(locationData);
-    // console.log('locationData ', text);
-  }
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync({ base64: true });
-    const locationCoords = await Location.getCurrentPositionAsync();
-    setCoord(locationCoords);
     setPhoto(photo.uri);
     setBase64(photo.base64);
   };
 
+  const getFirebaseURL = async () => {
+    // const response = await fetch(photo.uri); // make response object
+    // console.log('response ', response);
+    // const file = await response.blob(); // convert to blob
+    // console.log('file ', file);
+    // await uploadBytes(storageRef, file);
+    // goit version
+    const uniquePostId = Date.now().toString();
+    await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64, {
+      contentType: 'image/jpg',
+    });
+    const pathReference = await getDownloadURL(
+      ref(storage, `postImages/${uniquePostId}`),
+    );
+    return pathReference;
+  };
+
+  const uploadPostToServer = async () => {
+    const firebasePhotoUrl = await getFirebaseURL();
+    // Add a new document with a generated id.
+    const docRef = await addDoc(collection(db, 'posts'), {
+      firebasePhotoUrl,
+      title,
+      location: coord.coords,
+      userId,
+      nick,
+    });
+    console.log('Document written with ID: ', docRef.id);
+  };
+
   const sendPhoto = async () => {
+    await requestLocation();
+    await uploadPostToServer();
     navigation.navigate('Публикации', {
       photo,
       title,
       location,
       coord,
     });
-    // const response = await fetch(photo.uri); // make response object
-    // const file = await response.blob(); // convert to blob
-    // await uploadBytes(storageRef, file);
-    // goit version
-    const uniquePostId = Date.now().toString();
-    await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64);
     setPressed(false);
     setPhoto(null);
-     const pathReference = await getDownloadURL(
-      ref(storage, `postImages/${uniquePostId}`),
-    );
-    console.log('storageFirebasePhoto', pathReference);
   };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View
