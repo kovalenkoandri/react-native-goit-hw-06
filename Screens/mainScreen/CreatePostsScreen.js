@@ -47,19 +47,13 @@ const CreatePostsScreen = ({ navigation }) => {
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync({ base64: true });
     setPhoto(photo.uri);
-    setBase64(photo.base64);
+    setBase64('data:image/jpeg;base64,' + photo.base64);
   };
 
   const getFirebaseURL = async () => {
-    // const response = await fetch(photo.uri); // make response object
-    // console.log('response ', response);
-    // const file = await response.blob(); // convert to blob
-    // console.log('file ', file);
-    // await uploadBytes(storageRef, file);
-    // goit version
     const uniquePostId = Date.now().toString();
     await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64, {
-      contentType: 'image/jpg',
+      contentType: 'image/jpeg',
     });
     const pathReference = await getDownloadURL(
       ref(storage, `postImages/${uniquePostId}`),
