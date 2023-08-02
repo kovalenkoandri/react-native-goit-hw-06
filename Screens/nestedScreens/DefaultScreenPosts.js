@@ -3,7 +3,6 @@ import {
   StyleSheet,
   FlatList,
   Image,
-  Button,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -11,18 +10,10 @@ import SvgLocationMark from '../../helpers/SvgLocationMark';
 import SvgRemark from '../../helpers/SvgRemark';
 import { useState, useEffect } from 'react';
 import { getDocs, collection } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { db, storage, base64Raw, base64Invalid } from '../../firebase/config';
-import { decode } from 'base-64';
-import * as FileSystem from 'expo-file-system';
-
-if (typeof atob === 'undefined') {
-  global.atob = decode;
-}
+import { db } from '../../firebase/config';
 
 const DefaultScreenPosts = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
-  const [base64, setBase64] = useState(null);
 
   // useEffect(() => {
   //   if (route.params) {
@@ -32,42 +23,17 @@ const DefaultScreenPosts = ({ navigation, route }) => {
 
   const newPosts = [];
   const getAllPost = async () => {
-    //   .onSnapshot((data) =>
-    //     setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))),
-    // );
     const querySnapshot = await getDocs(collection(db, 'posts'));
 
     querySnapshot.forEach(async (doc) => {
       console.log(doc.id, ' => ', doc.data());
-      // const response = await fetch(doc.data().firebasePhotoUrl);
-      // console.log(JSON.stringify(response.url));
-      // const data = await response.blob();
       newPosts.push({ ...doc.data(), id: doc.id });
-      // newPosts.push({ ...doc.data(), id: doc.id, dataBlob: data });
     });
   };
-  const fetchFirebasePhotoUrl = async () => {
-  
-    const { uri } = await FileSystem.downloadAsync(
-      'https://firebasestorage.googleapis.com/v0/b/react-native-goit-hw-06.appspot.com/o/postImages%2F1690963688961?alt=media&token=5b4b6456-c52b-435a-a494-f5cf1d8f1db4',
-      FileSystem.cacheDirectory + 'small',
-    );
-    console.log('Finished downloading to ', uri);
-   
 
-  };
   useEffect(() => {
     (async () => {
       await getAllPost();
-      // setPosts((old) => {
-      //   console.log('----------old', old);
-      //   console.log('----------newPosts', newPosts);
-      //   const combinePosts = ([...old,newPosts]).flat();
-      //   console.log('----------combine', combinePosts);
-      //   console.log('route.params-------------', route.params);
-      // return combinePosts;
-      // });
-      await fetchFirebasePhotoUrl();
       setPosts(newPosts);
     })();
   }, [route.params]);
@@ -101,12 +67,7 @@ const DefaultScreenPosts = ({ navigation, route }) => {
             >
               <Image
                 source={{
-                  // uri: `data:image/jpeg;base64,https://firebasestorage.googleapis.com/v0/b/react-native-goit-hw-06.appspot.com/o/postImages%2F1690887912141?alt=media&token=1825fc0b-1966-43e4-a20a-2e2e6b29abf8`,
-                  // uri: `https://firebasestorage.googleapis.com/v0/b/react-native-goit-hw-06.appspot.com/o/postImages%2F1690887912141?alt=media&token=1825fc0b-1966-43e4-a20a-2e2e6b29abf8`,
-                  // uri: item?.dataBlob,
-                  uri: 'data:image/jpeg;base64' + base64,
-                  // uri: base64,
-                  // uri: base64Raw,
+                  uri: item?.firebasePhotoUrl,
                 }}
                 style={{ width: 350, height: 200 }}
               />

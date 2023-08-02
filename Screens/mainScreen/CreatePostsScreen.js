@@ -24,11 +24,7 @@ import {
   uploadString,
 } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
-import { decode } from 'base-64';
-
-if (typeof atob === 'undefined') {
-  global.atob = decode;
-}
+import { uriToBlob } from '../../base64Utils/uriToBlob';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -54,19 +50,25 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync({ base64: true });
-    setPhoto(photo.base64);
+    const { uri } = await camera.takePictureAsync();
+    setPhoto(uri);
   };
 
   const getFirebaseURL = async () => {
     const uniquePostId = Date.now().toString();
-    await uploadString(
-      ref(storage, `postImages/${uniquePostId}`),
-      photo,
-      'base64',
-    );
+    const file = await uriToBlob(photo);
+    try {
+      await uploadBytes(ref(storage, `postImages/${uniquePostId}.jpeg`), file, {
+      contentType: 'image/jpeg',
+    }).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+    });
+    } catch (error) {
+      console.error(error);
+    }
+    
     const pathReference = await getDownloadURL(
-      ref(storage, `postImages/${uniquePostId}`),
+      ref(storage, `postImages/${uniquePostId}.jpeg`),
     );
     return pathReference;
   };
@@ -109,7 +111,7 @@ const CreatePostsScreen = ({ navigation }) => {
         <Camera style={styles.CreatePostsScreenLoadPhotoBg} ref={setCamera}>
           {photo && (
             <Image
-              source={{ uri: 'data:image/jpeg;base64,' + photo }}
+              source={{ uri: photo }}
               style={styles.CreatePostsScreenWidthHeight}
             />
           )}
