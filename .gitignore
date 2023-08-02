@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+base64Utils/
 # Expo
 .expo/
 dist/
@@ -39,3 +39,6 @@ firebase/config.js
 redux/ReactotronConfig.js
 .env
 .vscode/launch.json
+cors.json
+package-lock.json
+package-lock.json

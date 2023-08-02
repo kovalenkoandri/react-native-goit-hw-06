@@ -17,8 +17,18 @@ import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 import { ValidateInput } from '../../helpers/ValidateInput';
 import { storage, db } from '../../firebase/config';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  uploadString,
+} from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
+import { decode } from 'base-64';
+
+if (typeof atob === 'undefined') {
+  global.atob = decode;
+}
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -26,7 +36,6 @@ const CreatePostsScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [coord, setCoord] = useState(null);
-  const [base64, setBase64] = useState(null);
   const inputTitleHandler = (text) => setTitle(text);
   const inputLocationHandler = (text) => setLocation(text);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -46,15 +55,16 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync({ base64: true });
-    setPhoto(photo.uri);
-    setBase64('data:image/jpeg;base64,' + photo.base64);
+    setPhoto(photo.base64);
   };
 
   const getFirebaseURL = async () => {
     const uniquePostId = Date.now().toString();
-    await uploadBytes(ref(storage, `postImages/${uniquePostId}`), base64, {
-      contentType: 'image/jpeg',
-    });
+    await uploadString(
+      ref(storage, `postImages/${uniquePostId}`),
+      photo,
+      'base64',
+    );
     const pathReference = await getDownloadURL(
       ref(storage, `postImages/${uniquePostId}`),
     );
@@ -67,7 +77,8 @@ const CreatePostsScreen = ({ navigation }) => {
     const docRef = await addDoc(collection(db, 'posts'), {
       firebasePhotoUrl,
       title,
-      location: coord.coords,
+      location,
+      coord,
       userId,
       nick,
     });
@@ -98,7 +109,7 @@ const CreatePostsScreen = ({ navigation }) => {
         <Camera style={styles.CreatePostsScreenLoadPhotoBg} ref={setCamera}>
           {photo && (
             <Image
-              source={{ uri: photo }}
+              source={{ uri: 'data:image/jpeg;base64,' + photo }}
               style={styles.CreatePostsScreenWidthHeight}
             />
           )}
@@ -133,17 +144,20 @@ const CreatePostsScreen = ({ navigation }) => {
               />
               {/* <Text style={styles.CreatePostsScreenLocationName}>Местность...</Text> */}
             </View>
-            <Pressable
+            <TouchableOpacity
               disabled={!photo ? true : false}
-              style={({ pressed }) => {
-                pressed && setPressed(true);
-                return [
-                  {
-                    backgroundColor: pressed ? '#FF6C00' : '#F6F6F6',
-                  },
-                  styles.CreatePostsScreenButtonPublish,
-                ];
-              }}
+              style={
+                styles.CreatePostsScreenButtonPublish
+
+                // style={({ pressed }) => {
+                // pressed && setPressed(true);
+                // return [
+                //   {
+                //     backgroundColor: pressed ? '#FF6C00' : '#F6F6F6',
+                //   },
+                //   styles.CreatePostsScreenButtonPublish,
+                // ];
+              }
               onPress={sendPhoto}
             >
               <Text
@@ -154,7 +168,7 @@ const CreatePostsScreen = ({ navigation }) => {
               >
                 Опубликовать
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -231,6 +245,7 @@ const styles = StyleSheet.create({
   CreatePostsScreenButtonPublish: {
     borderRadius: 100,
     // backgroundColor: '#F6F6F6',
+    backgroundColor: '#FF6C00',
     alignItems: 'center',
     justifyContent: 'center',
     height: 51,
