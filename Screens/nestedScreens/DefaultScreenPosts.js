@@ -26,7 +26,7 @@ const DefaultScreenPosts = ({ navigation, route }) => {
     const querySnapshot = await getDocs(collection(db, 'posts'));
 
     querySnapshot.forEach(async (doc) => {
-      console.log(doc.id, ' => ', doc.data());
+      // console.log(doc.id, ' => ', doc.data());
       newPosts.push({ ...doc.data(), id: doc.id });
     });
   };
@@ -37,9 +37,16 @@ const DefaultScreenPosts = ({ navigation, route }) => {
       setPosts(newPosts);
     })();
   }, [route.params]);
-
-  const openCoordScreen = () => {
-    navigation.navigate('Map', { route });
+  
+  const openCoordScreen = (item) => {
+    console.log(item.coord?.coords.latitude);
+    navigation.navigate('Map', {
+      latitude: item.coord?.coords.latitude ?? 'not provided',
+      longitude: item.coord?.coords.longitude ?? 'not provided',
+      // params: route.params,
+      // navigation,
+      route
+    });
   };
   return (
     <View style={styles.container}>
@@ -83,7 +90,7 @@ const DefaultScreenPosts = ({ navigation, route }) => {
               <Text style={styles.PostsScreenUserName}>
                 location {item?.location}
               </Text>
-              <TouchableOpacity title="go to map" onPress={openCoordScreen}>
+              <TouchableOpacity title="go to map" onPress={() => openCoordScreen(item)}>
                 <SvgLocationMark />
               </TouchableOpacity>
               <TouchableOpacity

@@ -14,9 +14,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -32,7 +30,10 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE"
       ],
-      "package": "com.kovalenkoandrii.reactnativegoithw06"
+      "package": "com.kovalenkoandrii.reactnativegoithw06",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyApt4u8YS8NWrsgyf9pMhDoPc1LFPfPs-o" }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

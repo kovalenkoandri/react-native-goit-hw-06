@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -39,15 +39,25 @@ const CreatePostsScreen = ({ navigation }) => {
   const { keyboardHide, isShowKeyboard, setIsShowKeyboard } = ValidateInput();
   const { userId, nick } = useSelector((state) => state.auth);
 
-  const requestLocation = async () => {
+  const requestLocation = useCallback(async () => {
+    let isSubscribed = true;
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       setErrorMsg('Permission to access location was denied');
       return;
     }
-    const locationCoords = await Location.getCurrentPositionAsync();
-    setCoord(locationCoords ?? errorMsg);
-  };
+    const locationCoords = await Location.getCurrentPositionAsync().catch(
+      console.error,
+    );
+    if (isSubscribed) {
+      setCoord(locationCoords || errorMsg);
+    }
+    return () => (isSubscribed = false);
+  }, []);
+
+  useEffect(() => {
+    requestLocation().catch(console.error);
+  }, [requestLocation]);
 
   const takePhoto = async () => {
     const { uri } = await camera.takePictureAsync();
@@ -59,14 +69,14 @@ const CreatePostsScreen = ({ navigation }) => {
     const file = await uriToBlob(photo);
     try {
       await uploadBytes(ref(storage, `postImages/${uniquePostId}.jpeg`), file, {
-      contentType: 'image/jpeg',
-    }).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
+        contentType: 'image/jpeg',
+      }).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
     } catch (error) {
       console.error(error);
     }
-    
+
     const pathReference = await getDownloadURL(
       ref(storage, `postImages/${uniquePostId}.jpeg`),
     );
@@ -88,7 +98,6 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const sendPhoto = async () => {
-    await requestLocation();
     await uploadPostToServer();
     navigation.navigate('Публикации', {
       photo,

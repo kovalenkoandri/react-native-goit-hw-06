@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapScreen = ({ route }) => {
-  
-  const latitude = route.params.route.params.coord.coords.latitude;
-  const longitude = route.params.route.params.coord.coords.longitude;
+  const latitude = route.params.latitude;
+  const longitude = route.params.longitude;
+  console.log('route',route.params);
   return (
     <View style={styles.container}>
-      {route.params.route.params.coord.coords.latitude ? (
+      {latitude ? (
         <MapView
+          provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
             latitude,

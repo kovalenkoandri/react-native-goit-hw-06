@@ -3,6 +3,8 @@
 # dependencies
 node_modules/
 base64Utils/
+android/
+app.json
 # Expo
 .expo/
 dist/
@@ -42,3 +44,4 @@ redux/ReactotronConfig.js
 cors.json
 package-lock.json
 package-lock.json
+app.json
