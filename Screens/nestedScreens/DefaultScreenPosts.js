@@ -6,8 +6,8 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import SvgLocationMark from '../../helpers/SvgLocationMark';
-import SvgRemark from '../../helpers/SvgRemark';
+import SvgLocationMark from '../../svg/SvgLocationMark';
+import SvgRemark from '../../svg/SvgRemark';
 import { useState, useEffect } from 'react';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';

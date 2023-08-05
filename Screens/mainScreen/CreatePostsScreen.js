@@ -11,11 +11,11 @@ import {
   Alert,
 } from 'react-native';
 import { useSelector } from 'react-redux';
-import SvgLocationMark from '../../helpers/SvgLocationMark';
-import SvgCreatePhotoIcon from '../../helpers/SvgCreatePhotoIcon';
+import SvgLocationMark from '../../svg/SvgLocationMark';
+import SvgCreatePhotoIcon from '../../svg/SvgCreatePhotoIcon';
 import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
-import { ValidateInput } from '../../helpers/ValidateInput';
+import { ValidateInput } from '../../svg/ValidateInput';
 import { storage, db } from '../../firebase/config';
 import {
   ref,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
-import SvgLocationMark from '../../helpers/SvgLocationMark';
-import SvgRemark from '../../helpers/SvgRemark';
+import SvgLocationMark from '../../svg/SvgLocationMark';
+import SvgRemark from '../../svg/SvgRemark';
 
 const PostsScreenCompleted = () => {
   return (

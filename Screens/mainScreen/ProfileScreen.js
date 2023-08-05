@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import SvgLogout from '../../helpers/SvgLogout';
+import SvgLogout from '../../svg/SvgLogout';
 import { useDispatch } from 'react-redux';
 import { authSignOutUser } from '../../redux/auth/authOperations';
 

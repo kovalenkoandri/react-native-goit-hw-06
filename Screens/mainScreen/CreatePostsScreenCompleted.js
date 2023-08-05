@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import SvgLocationMark from '../../helpers/SvgLocationMark';
-import SvgCreatePhotoIcon from '../../helpers/SvgCreatePhotoIcon';
+import SvgLocationMark from '../../svg/SvgLocationMark';
+import SvgCreatePhotoIcon from '../../svg/SvgCreatePhotoIcon';
 
 const CreatePostsScreenCompleted = ({ navigation }) => {
   return (
