@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -32,7 +34,9 @@
       ],
       "package": "com.kovalenkoandrii.reactnativegoithw06",
       "config": {
-        "googleMaps": { "apiKey": "AIzaSyApt4u8YS8NWrsgyf9pMhDoPc1LFPfPs-o" }
+        "googleMaps": {
+          "apiKey": "AIzaSyApt4u8YS8NWrsgyf9pMhDoPc1LFPfPs-o"
+        }
       }
     },
     "web": {
@@ -52,9 +56,10 @@
         }
       ]
     ],
+    "owner": "kovalenkoandrii",
     "extra": {
       "eas": {
-        "projectId": "8640e0ba-2b90-40a0-8b63-e931c995af41"
+        "projectId": "b23ae488-1c3c-4c98-a290-d015feefada4"
       }
     }
   }

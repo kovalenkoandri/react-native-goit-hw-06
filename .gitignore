@@ -1,10 +1,8 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
+.env1
 # dependencies
 node_modules/
 base64Utils/
-android/
-app.json
 # Expo
 .expo/
 dist/
@@ -35,13 +33,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
-package-lock.json
-firebase/config.js
 %ProgramData%/Microsoft/Windows/UUS/State/_active.uusver
 redux/ReactotronConfig.js
-.env
 .vscode/launch.json
-cors.json
-package-lock.json
-package-lock.json
-app.json
+
