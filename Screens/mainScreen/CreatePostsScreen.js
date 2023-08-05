@@ -24,7 +24,7 @@ import {
   uploadString,
 } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
-import { uriToBlob } from '../../base64Utils/uriToBlob';
+import { uriToBlob } from '../../helpers/uriToBlob';
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
