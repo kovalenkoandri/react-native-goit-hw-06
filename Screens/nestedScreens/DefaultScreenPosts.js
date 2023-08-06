@@ -11,41 +11,33 @@ import SvgRemark from '../../svg/SvgRemark';
 import { useState, useEffect } from 'react';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import { useCallback } from 'react';
 
-const DefaultScreenPosts = ({ navigation, route }) => {
+const DefaultScreenPosts = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
-  // useEffect(() => {
-  //   if (route.params) {
-  //     setPosts((prevState) => [...prevState, route.params]);
-  //   }
-  // }, [route.params]);
-
   const newPosts = [];
-  const getAllPost = async () => {
+  const getAllPost = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, 'posts'));
 
     querySnapshot.forEach(async (doc) => {
-      // console.log(doc.id, ' => ', doc.data());
+      console.log(doc.id, ' => ', doc.data());
       newPosts.push({ ...doc.data(), id: doc.id });
     });
-  };
+    console.log('newPosts', newPosts);
+    setPosts(oldPosts => [...oldPosts, newPosts]);
+  }, []);
 
   useEffect(() => {
     (async () => {
       await getAllPost();
-      setPosts(newPosts);
     })();
-  }, [route.params]);
-  
+  }, []);
+
   const openCoordScreen = (item) => {
-    console.log(item.coord?.coords.latitude);
     navigation.navigate('Map', {
       latitude: item.coord?.coords.latitude ?? 'not provided',
       longitude: item.coord?.coords.longitude ?? 'not provided',
-      // params: route.params,
-      // navigation,
-      route
     });
   };
   return (
@@ -90,7 +82,10 @@ const DefaultScreenPosts = ({ navigation, route }) => {
               <Text style={styles.PostsScreenUserName}>
                 location {item?.location}
               </Text>
-              <TouchableOpacity title="go to map" onPress={() => openCoordScreen(item)}>
+              <TouchableOpacity
+                title="go to map"
+                onPress={() => openCoordScreen(item)}
+              >
                 <SvgLocationMark />
               </TouchableOpacity>
               <TouchableOpacity

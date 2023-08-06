@@ -15,7 +15,7 @@ import SvgLocationMark from '../../svg/SvgLocationMark';
 import SvgCreatePhotoIcon from '../../svg/SvgCreatePhotoIcon';
 import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
-import { ValidateInput } from '../../svg/ValidateInput';
+import { ValidateInput } from '../../helpers/ValidateInput';
 import { storage, db } from '../../firebase/config';
 import {
   ref,
@@ -26,7 +26,7 @@ import {
 import { collection, addDoc } from 'firebase/firestore';
 import { uriToBlob } from '../../helpers/uriToBlob';
 
-const CreatePostsScreen = ({ navigation }) => {
+const CreatePostsScreen = ({ navigation, route }) => {
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [title, setTitle] = useState('');
@@ -39,25 +39,35 @@ const CreatePostsScreen = ({ navigation }) => {
   const { keyboardHide, isShowKeyboard, setIsShowKeyboard } = ValidateInput();
   const { userId, nick } = useSelector((state) => state.auth);
 
-  const requestLocation = useCallback(async () => {
-    let isSubscribed = true;
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
-      return;
+  const requestLocation = () => {
+    // const requestLocation = useCallback(async () => {
+    // let { status } = await Location.requestForegroundPermissionsAsync();
+    // if (status !== 'granted') {
+    //   setErrorMsg('Permission to access location was denied');
+    //   return;
+    // }
+    // const locationCoords = await Location.getCurrentPositionAsync().catch(
+    //   console.error,
+    // );
+    const locationCoords = {
+      coords: {
+        latitude: 40,
+        longitude: -120,
+      },
+    };
+    const getRandomInRange = (from, to, fixed) => {
+      return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
+      // .toFixed() returns string, so ' * 1' is a trick to convert to number
     }
-    const locationCoords = await Location.getCurrentPositionAsync().catch(
-      console.error,
-    );
-    if (isSubscribed) {
-      setCoord(locationCoords || errorMsg);
-    }
-    return () => (isSubscribed = false);
-  }, []);
+    locationCoords.coords.latitude = getRandomInRange(30, 50, 3);
+    locationCoords.coords.longitude = getRandomInRange(-110, -130, 3);
 
-  useEffect(() => {
-    requestLocation().catch(console.error);
-  }, [requestLocation]);
+    setCoord(locationCoords || errorMsg);
+  };
+
+  // useEffect(() => {
+  //   requestLocation().catch(console.error);
+  // }, [requestLocation]);
 
   const takePhoto = async () => {
     const { uri } = await camera.takePictureAsync();
@@ -84,6 +94,7 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const uploadPostToServer = async () => {
+    requestLocation();
     const firebasePhotoUrl = await getFirebaseURL();
     // Add a new document with a generated id.
     const docRef = await addDoc(collection(db, 'posts'), {

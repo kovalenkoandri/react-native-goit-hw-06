@@ -3,9 +3,9 @@ import { View, Text, StyleSheet } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapScreen = ({ route }) => {
-  const latitude = route.params.latitude;
-  const longitude = route.params.longitude;
-  console.log('route',route.params);
+  const latitude = route.params?.latitude;
+  const longitude = route.params?.longitude;
+  // console.log('route',route.params);
   return (
     <View style={styles.container}>
       {latitude ? (

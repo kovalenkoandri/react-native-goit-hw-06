@@ -5,13 +5,13 @@ import MapScreen from '../nestedScreens/MapScreen';
 
 const NestedScreen = createNativeStackNavigator();
 
-const PostsScreen = ({ route, navigation }) => {
-  
+const PostsScreen = () => {
   return (
     <NestedScreen.Navigator>
-      <NestedScreen.Screen name="DefaultScreen">
-        {() => <DefaultScreenPosts {...{ navigation, route }} />}
-      </NestedScreen.Screen>
+      <NestedScreen.Screen
+        name="DefaultScreen"
+        component={DefaultScreenPosts}
+      />
       <NestedScreen.Screen name="Comments" component={CommentsScreen} />
       <NestedScreen.Screen name="Map" component={MapScreen} />
     </NestedScreen.Navigator>
