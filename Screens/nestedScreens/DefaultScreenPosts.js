@@ -17,20 +17,20 @@ const DefaultScreenPosts = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   const newPosts = [];
-  const getAllPost = useCallback(async () => {
+  const getAllPost =  async () => {
     const querySnapshot = await getDocs(collection(db, 'posts'));
 
     querySnapshot.forEach(async (doc) => {
-      console.log(doc.id, ' => ', doc.data());
+      // console.log(doc.id, ' => ', doc.data());
       newPosts.push({ ...doc.data(), id: doc.id });
     });
-    console.log('newPosts', newPosts);
-    setPosts(oldPosts => [...oldPosts, newPosts]);
-  }, []);
-
+    // console.log('newPosts', newPosts);
+  };
+  
   useEffect(() => {
     (async () => {
       await getAllPost();
+      setPosts(newPosts);
     })();
   }, []);
 
@@ -54,7 +54,7 @@ const DefaultScreenPosts = ({ navigation }) => {
       </View>
       <FlatList
         data={posts}
-        keyExtractor={(item, indx) => indx.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => {
           return (
             <View
@@ -90,7 +90,9 @@ const DefaultScreenPosts = ({ navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 title="go to Comments"
-                onPress={() => navigation.navigate('Comments')}
+                onPress={() =>
+                  navigation.navigate('Comments', { postId: item.id })
+                }
               >
                 <SvgRemark />
               </TouchableOpacity>

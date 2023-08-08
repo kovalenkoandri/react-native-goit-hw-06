@@ -31,13 +31,13 @@ const CreatePostsScreen = ({ navigation, route }) => {
   const [photo, setPhoto] = useState(null);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
-  const [coord, setCoord] = useState(null);
+  const [coord, setCoord] = useState({});
   const inputTitleHandler = (text) => setTitle(text);
   const inputLocationHandler = (text) => setLocation(text);
-  const [errorMsg, setErrorMsg] = useState(null);
   const [pressed, setPressed] = useState(false);
   const { keyboardHide, isShowKeyboard, setIsShowKeyboard } = ValidateInput();
   const { userId, nick } = useSelector((state) => state.auth);
+  const [comment, setComment] = useState('');
 
   const requestLocation = () => {
     // const requestLocation = useCallback(async () => {
@@ -58,11 +58,11 @@ const CreatePostsScreen = ({ navigation, route }) => {
     const getRandomInRange = (from, to, fixed) => {
       return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
       // .toFixed() returns string, so ' * 1' is a trick to convert to number
-    }
+    };
     locationCoords.coords.latitude = getRandomInRange(30, 50, 3);
     locationCoords.coords.longitude = getRandomInRange(-110, -130, 3);
 
-    setCoord(locationCoords || errorMsg);
+    setCoord((oldValues) => ({...oldValues, ...locationCoords}));
   };
 
   // useEffect(() => {
@@ -94,7 +94,6 @@ const CreatePostsScreen = ({ navigation, route }) => {
   };
 
   const uploadPostToServer = async () => {
-    requestLocation();
     const firebasePhotoUrl = await getFirebaseURL();
     // Add a new document with a generated id.
     const docRef = await addDoc(collection(db, 'posts'), {
@@ -104,20 +103,20 @@ const CreatePostsScreen = ({ navigation, route }) => {
       coord,
       userId,
       nick,
+      comment
     });
     console.log('Document written with ID: ', docRef.id);
   };
 
   const sendPhoto = async () => {
+    requestLocation();
     await uploadPostToServer();
-    navigation.navigate('Публикации', {
-      photo,
-      title,
-      location,
-      coord,
-    });
+    navigation.navigate('Публикации');
     setPressed(false);
     setPhoto(null);
+    setTitle('');
+    setLocation('');
+    setComment('');
   };
 
   return (
@@ -166,6 +165,10 @@ const CreatePostsScreen = ({ navigation, route }) => {
               />
               {/* <Text style={styles.CreatePostsScreenLocationName}>Местность...</Text> */}
             </View>
+            <TextInput
+              style={styles.CreatePostsScreenComment}
+              onChangeText={setComment}
+            />
             <TouchableOpacity
               disabled={!photo ? true : false}
               style={
@@ -263,6 +266,13 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#BDBDBD',
     marginLeft: 8,
+  },
+  CreatePostsScreenComment: {
+    fontFamily: 'RobotoRegular',
+    fontSize: 16,
+    lineHeight: 19,
+    color: '#BDBDBD',
+    marginTop: 15,
   },
   CreatePostsScreenButtonPublish: {
     borderRadius: 100,
