@@ -7,13 +7,13 @@ const MapScreen = ({ route }) => {
   const [latitude, setLatitude] = useState(null);
   useEffect(() => {
     if (
-      typeof route.params.longitude === 'number' &&
-      typeof route.params.latitude === 'number'
+      typeof route?.params?.longitude === 'number' &&
+      typeof route?.params?.latitude === 'number'
     ) {
-      setLatitude(route.params.latitude);
-      setLongitude(route.params.longitude);
+      setLatitude(route?.params?.latitude);
+      setLongitude(route?.params?.longitude);
     }
-  }, [route.params.longitude, route.params.latitude]);
+  }, [route?.params?.longitude, route?.params?.latitude]);
 
   return (
     <View style={styles.container}>

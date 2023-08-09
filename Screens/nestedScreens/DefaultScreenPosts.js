@@ -36,8 +36,8 @@ const DefaultScreenPosts = ({ navigation }) => {
 
   const openCoordScreen = (item) => {
     navigation.navigate('Map', {
-      latitude: item.coord?.coords.latitude ?? 'not provided',
-      longitude: item.coord?.coords.longitude ?? 'not provided',
+      latitude: item.coord?.coords?.latitude ?? 'not provided',
+      longitude: item.coord?.coords?.longitude ?? 'not provided',
     });
   };
   return (
@@ -71,10 +71,10 @@ const DefaultScreenPosts = ({ navigation }) => {
                 style={{ width: 350, height: 200 }}
               />
               <Text style={styles.PostsScreenUserName}>
-                coordinates latitude {item.coord?.coords.latitude}
+                coordinates latitude {item.coord?.coords?.latitude}
               </Text>
               <Text style={styles.PostsScreenUserName}>
-                coordinates longitude {item.coord?.coords.longitude}
+                coordinates longitude {item.coord?.coords?.longitude}
               </Text>
               <Text style={styles.PostsScreenUserName}>
                 title {item?.title}
