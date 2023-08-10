@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -22,19 +22,19 @@ const ProfileScreen = () => {
     dispatch(authSignOutUser());
   };
   let unsubscribe;
-  const profileComments = [];
-  const getUserPosts = async () => {
+  const getUserPosts = useCallback(async () => {
     const q = query(collection(db, 'posts'), where('userId', '==', userId));
+    const profileComments = [];
     unsubscribe = onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         profileComments.push({ ...doc.data(), id: doc.id });
       });
+      setUserComments(profileComments);
     });
-    setUserComments(profileComments);
     //   .onSnapshot((data) =>
     //     setUserPosts(data.docs.map((doc) => ({ ...doc.data() }))),
     //   );
-  };
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -46,8 +46,8 @@ const ProfileScreen = () => {
     return () => {
       unsubscribe();
       mounted = false;
-    }
-  }, []);
+    };
+  }, [getUserPosts]);
 
   return (
     <View style={styles.container}>
@@ -58,9 +58,9 @@ const ProfileScreen = () => {
       <View>
         <FlatList
           data={userComments}
-          CommentsyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            console.log('Current profileComments: ', Object.entries(item));
+            // console.log('Current profileComments: ', Object.entries(item));
             return (
               <View
                 style={{
@@ -69,7 +69,13 @@ const ProfileScreen = () => {
                   alignItems: 'center',
                 }}
               >
-                <Text style={styles.itemText}>{item.id}</Text>
+                <Text style={styles.itemText}>id {item.id}</Text>
+                <Text style={styles.itemText}>title {item.title}</Text>
+                <Text style={styles.itemText}>location {item.location}</Text>
+                <Text style={styles.itemText}>nick {item.nick}</Text>
+                <Text style={styles.itemText}>
+                  initial comment {item.comment}
+                </Text>
                 <Image
                   source={{ uri: item?.firebasePhotoUrl }}
                   style={{ width: 350, height: 200 }}

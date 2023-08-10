@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,13 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { db } from '../../firebase/config';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  onSnapshot,
+  query,
+} from 'firebase/firestore';
 
 const CommentsScreen = ({ route }) => {
   const { postId } = route.params;
@@ -27,24 +33,25 @@ const CommentsScreen = ({ route }) => {
     });
     console.log('Document written with ID: ', newComment.id);
   };
-  const fbComments = [];
-  const getAllCommentsFromFirebase = async () => {
-    const querySnapshot = await getDocs(commentsRef);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      // console.log(doc.id, ' => ', doc.data());
-      fbComments.push({ ...doc.data(), id: doc.id });
+
+  const getAllCommentsFromFirebase = useCallback(async () => {
+    const q = query(commentsRef);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const fbComments = [];
+      querySnapshot.forEach((doc) => {
+        fbComments.push({ ...doc.data(), id: doc.id });
+      });
+      setAllComments(() => fbComments);
     });
-    setAllComments(fbComments);
-    //   .onSnapshot((data) =>
-    //     setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))),
-    //   );
-  };
+    return () => unsubscribe();
+  }, []);
+
   useEffect(() => {
     (async () => {
       await getAllCommentsFromFirebase();
     })();
-  }, []);
+  }, [getAllCommentsFromFirebase]);
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
@@ -58,7 +65,8 @@ const CommentsScreen = ({ route }) => {
             </View>
           )}
           keyExtractor={(item) => {
-            return item.id;
+            // console.log('item.id => ', item.id);
+            return item.id.toString();
           }}
         />
       </SafeAreaView>

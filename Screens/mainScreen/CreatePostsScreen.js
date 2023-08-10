@@ -62,7 +62,7 @@ const CreatePostsScreen = ({ navigation, route }) => {
     locationCoords.coords.latitude = getRandomInRange(30, 50, 3);
     locationCoords.coords.longitude = getRandomInRange(-110, -130, 3);
 
-    setCoord((oldValues) => ({...oldValues, ...locationCoords}));
+    setCoord(locationCoords );
   };
 
   // useEffect(() => {
@@ -166,6 +166,7 @@ const CreatePostsScreen = ({ navigation, route }) => {
               {/* <Text style={styles.CreatePostsScreenLocationName}>Местность...</Text> */}
             </View>
             <TextInput
+              placeholder="Коментарии..."
               style={styles.CreatePostsScreenComment}
               onChangeText={setComment}
             />
@@ -272,7 +273,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: '#BDBDBD',
-    marginTop: 15,
+    marginVertical: 15,
   },
   CreatePostsScreenButtonPublish: {
     borderRadius: 100,

@@ -17,7 +17,7 @@ const DefaultScreenPosts = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   const newPosts = [];
-  const getAllPost =  async () => {
+  const getAllPost = useCallback(async () => {
     const querySnapshot = await getDocs(collection(db, 'posts'));
 
     querySnapshot.forEach(async (doc) => {
@@ -25,14 +25,14 @@ const DefaultScreenPosts = ({ navigation }) => {
       newPosts.push({ ...doc.data(), id: doc.id });
     });
     // console.log('newPosts', newPosts);
-  };
+  },[]) ;
   
   useEffect(() => {
     (async () => {
       await getAllPost();
       setPosts(newPosts);
     })();
-  }, []);
+  }, [getAllPost]);
 
   const openCoordScreen = (item) => {
     navigation.navigate('Map', {
