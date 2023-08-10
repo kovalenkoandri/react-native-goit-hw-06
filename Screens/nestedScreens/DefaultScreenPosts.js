@@ -9,28 +9,29 @@ import {
 import SvgLocationMark from '../../svg/SvgLocationMark';
 import SvgRemark from '../../svg/SvgRemark';
 import { useState, useEffect } from 'react';
-import { getDocs, collection } from 'firebase/firestore';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { useCallback } from 'react';
 
 const DefaultScreenPosts = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
-  const newPosts = [];
   const getAllPost = useCallback(async () => {
-    const querySnapshot = await getDocs(collection(db, 'posts'));
-
-    querySnapshot.forEach(async (doc) => {
-      // console.log(doc.id, ' => ', doc.data());
-      newPosts.push({ ...doc.data(), id: doc.id });
+    const q = query(collection(db, 'posts'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const fbPosts = [];
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, ' => ', doc.data());
+        fbPosts.push({ ...doc.data(), id: doc.id });
+      });
+      setPosts(() => fbPosts);
     });
-    // console.log('newPosts', newPosts);
+    return () => unsubscribe();
   },[]) ;
   
   useEffect(() => {
     (async () => {
       await getAllPost();
-      setPosts(newPosts);
     })();
   }, [getAllPost]);
 
