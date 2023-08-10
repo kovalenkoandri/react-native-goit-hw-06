@@ -29,7 +29,7 @@ const ProfileScreen = () => {
       querySnapshot.forEach((doc) => {
         profileComments.push({ ...doc.data(), id: doc.id });
       });
-      setUserComments(profileComments);
+      setUserComments(() => profileComments);
     });
     //   .onSnapshot((data) =>
     //     setUserPosts(data.docs.map((doc) => ({ ...doc.data() }))),
@@ -60,7 +60,7 @@ const ProfileScreen = () => {
           data={userComments}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            // console.log('Current profileComments: ', Object.entries(item));
+            console.log('Current profileComments: ', Object.entries(item));
             return (
               <View
                 style={{
