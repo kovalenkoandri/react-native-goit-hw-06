@@ -35,7 +35,7 @@
       "package": "com.kovalenkoandrii.reactnativegoithw06",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyApt4u8YS8NWrsgyf9pMhDoPc1LFPfPs-o"
+          "apiKey": "your-api-key"
         }
       }
     },
